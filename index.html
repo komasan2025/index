@@ -3,342 +3,425 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>経営状況分析レポート</title>
+    <title>横浜市 食料品価格上昇インフォグラフィック (2012-2024)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Application Structure Plan: 
-        - Navigation: Top tabs for "概要", "売上分析", "物価影響", "賃金分析", "経営課題".
-        - User Flow: Click tabs to switch content sections. Each section displays relevant data, charts, and key messages.
-        - Rationale: Thematic sectioning improves usability over a long scroll, allowing direct access to specific information areas and breaking down complex data into digestible parts. This structure is chosen to facilitate quick understanding and focused analysis by the target audience (family members involved in経営判断).
+    <!-- 
+        Infographic Narrative & Structure Plan:
+        Theme: Tracking the Rise in Food Prices in Yokohama (2012-Present)
+
+        1.  Hero Section:
+            - Title: "横浜市の食料品価格高騰：13年間の軌跡"
+            - Hook: "横浜市の食料品価格は2012年から約25%以上も上昇し、市民生活に影響を与えています。"
+            - Brief intro about the scope.
+
+        2.  Section 1: 全体的な食料品価格の動向 (横浜市 食料総合CPI)
+            - Title: "大局を見る：横浜市の食料品インフレ全貌"
+            - Introduction: CPIの重要性と生活費への影響を解説。
+            - Visualization: Line Chart (Chart.js) showing Yokohama Food General CPI (2012-2024, 2020=100).
+            - Key Takeaway: 累積的な上昇と顕著な加速時期を強調。
+
+        3.  Section 2: 詳細分析：食品カテゴリー別 価格変動
+            - Title: "家計を圧迫する品目は？カテゴリー別 価格上昇率"
+            - Introduction: 全ての食品が一様に値上がりしているわけではないことを説明。
+            - Visualizations:
+                - Multi-series Line Chart (Chart.js): 主要カテゴリー別CPI比較。
+                - Bar Chart (Chart.js): 2012年から2024年までの主要カテゴリー別上昇率。
+            - Key Takeaways: 最も上昇率が高い・低いカテゴリー、生鮮食品の変動性を特定。
+
+        4.  Section 3: なぜ高騰が続くのか？主な要因分析
+            - Title: "価格の裏側：食料品インフレを煽る要因"
+            - Introduction: 要因の複雑さを簡潔に説明。
+            - Content: HTML/CSSによる要因リスト（国際要因、国内要因）。
+            - Key Takeaways: 価格上昇の多面性を強調。
+
+        5.  Section 4: 影響と今後の展望
+            - Title: "波及効果：横浜市民への影響と今後の見通し"
+            - Introduction: 家計や地域経済への影響を議論。
+            - Content: 影響の要約、今後の展望。
+
+        6.  Conclusion & Data Source:
+            - 簡単なまとめ。
+            - データ出典：e-Stat、接続指数の方法論。
     -->
-    <!-- Visualization & Content Choices:
-        - 概要: Styled text blocks (HTML/Tailwind) for a quick overview. Goal: Inform. Interaction: None. Justification: Direct presentation of main findings.
-        - 売上分析: Bar chart (Chart.js) comparing '2013年実績(現在価値)' vs '2024年見込'. Text for difference. Goal: Compare. Interaction: Tooltips. Justification: Visual sales gap highlight.
-        - 物価影響: Key figures and a simple bar visual (HTML/Tailwind) for living cost increase. Goal: Inform. Interaction: None. Justification: Direct impact numbers.
-        - 賃金分析: Bar chart (Chart.js) comparing 'A氏の実質価値賃金' vs '理想モデルの実質価値賃金'. Text for difference. Goal: Compare. Interaction: Tooltips. Justification: Visual real wage shortfall.
-        - 経営課題: Styled list/cards (HTML/Tailwind) for challenges and conclusion. Goal: Inform. Interaction: None. Justification: Clear, itemized issues.
-        - All monetary values clearly labeled with "万円". Chart.js options will handle label display and responsiveness.
+
+    <!-- 
+        Visualization Choices & Justification (NO SVG, NO MERMAID JS CONFIRMED):
+
+        1.  Hero Section - Overall Price Increase Statistic:
+            - Goal: Inform. Chosen Visualization: Single Big Number (HTML/Tailwind). Justification: Effective communication.
+        2.  Section 1 - Yokohama Food General CPI Trend:
+            - Goal: Change. Chosen Visualization: Line Chart (Chart.js Canvas). Justification: Trend visualization. Label Wrapping & Tooltip Config Applied.
+        3.  Section 2 - Category-Specific CPI Trends:
+            - Goal: Compare & Change. Chosen Visualization: Multi-series Line Chart (Chart.js Canvas). Justification: Comparison of trends. Label Wrapping & Tooltip Config Applied.
+        4.  Section 2 - Percentage Increase by Category (2012 to 2024):
+            - Goal: Compare. Chosen Visualization: Bar Chart (Chart.js Canvas). Justification: Magnitude comparison. Label Wrapping & Tooltip Config Applied.
+        5.  Section 3 - Key Driving Factors:
+            - Goal: Organize. Chosen Visualization: Structured HTML/CSS list. Justification: Clear textual presentation.
+        6.  Section 4 - Impact Stat:
+            - Goal: Inform. Chosen Visualization: Single Big Number (HTML/Tailwind). Justification: Impact highlight.
     -->
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .tab-button { transition: all 0.3s ease; }
-        .tab-button.active { border-bottom-width: 4px; }
-        .content-section { display: none; }
-        .content-section.active { display: block; }
+        body {
+            font-family: 'Inter', sans-serif; /* Tailwind uses Inter by default if available */
+        }
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 600px; /* max-w-2xl equivalent */
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
-            height: 320px; /* h-80 */
-            max-height: 400px;
+            height: 320px; 
+            max-height: 450px;
         }
         @media (min-width: 768px) { /* md breakpoint */
             .chart-container {
-                height: 384px; /* h-96 */
+                height: 400px;
             }
         }
-        .kpi-card {
-            background-color: white;
-            padding: 1.5rem; /* p-6 */
-            border-radius: 0.5rem; /* rounded-lg */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+        .factor-card {
+            background-color: #FFFFFF;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease;
         }
-        .kpi-title {
-            font-size: 0.875rem; /* text-sm */
-            font-weight: 500; /* font-medium */
-            color: #4b5563; /* text-gray-600 */
+        .factor-card:hover {
+            transform: translateY(-5px);
         }
-        .kpi-value {
-            font-size: 1.875rem; /* text-3xl */
-            font-weight: 700; /* font-bold */
-            color: #1f2937; /* text-gray-800 */
-        }
-        .kpi-comparison {
-            font-size: 0.875rem; /* text-sm */
-            color: #4b5563; /* text-gray-600 */
-        }
-        .text-negative { color: #ef4444; /* text-red-500 */ }
-        .text-positive { color: #22c55e; /* text-green-500 */ }
-        .nav-item:hover { background-color: #f3f4f6; /* hover:bg-gray-100 */ }
-        .highlight-text {
-            font-weight: 600; /* semibold */
-            color: #dc2626; /* red-600 */
+        .factor-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #3B82F6; /* Tailwind blue-500 */
         }
     </style>
 </head>
-<body class="bg-stone-100 text-stone-800">
+<body class="bg-blue-50 text-blue-800">
 
-    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-sky-700">経営状況分析レポート</h1>
-            <p class="text-stone-600 mt-2">売上・物価・賃金の現状と課題に関するインタラクティブ分析</p>
-        </header>
+    <header class="bg-blue-600 text-white p-8 text-center sticky top-0 z-50 shadow-lg">
+        <h1 class="text-4xl font-bold">横浜市の食料品価格高騰：13年間の軌跡</h1>
+        <p class="mt-2 text-lg">2012年から2024年にかけて、横浜市の食料品消費者物価指数は約25.6%上昇。私たちの食卓に何が起きているのでしょうか？</p>
+    </header>
 
-        <nav class="bg-white shadow-md rounded-lg mb-8 sticky top-0 z-10">
-            <ul class="flex flex-wrap justify-center md:justify-start">
-                <li><button data-tab="summary" class="tab-button nav-item text-sm md:text-base font-medium p-3 md:p-4 text-stone-700 border-b-4 border-transparent hover:text-sky-600 hover:border-sky-500 active" onclick="showSection('summary', this)">概要</button></li>
-                <li><button data-tab="sales" class="tab-button nav-item text-sm md:text-base font-medium p-3 md:p-4 text-stone-700 border-b-4 border-transparent hover:text-sky-600 hover:border-sky-500" onclick="showSection('sales', this)">売上分析</button></li>
-                <li><button data-tab="inflation" class="tab-button nav-item text-sm md:text-base font-medium p-3 md:p-4 text-stone-700 border-b-4 border-transparent hover:text-sky-600 hover:border-sky-500" onclick="showSection('inflation', this)">物価影響</button></li>
-                <li><button data-tab="wages" class="tab-button nav-item text-sm md:text-base font-medium p-3 md:p-4 text-stone-700 border-b-4 border-transparent hover:text-sky-600 hover:border-sky-500" onclick="showSection('wages', this)">賃金分析</button></li>
-                <li><button data-tab="challenges" class="tab-button nav-item text-sm md:text-base font-medium p-3 md:p-4 text-stone-700 border-b-4 border-transparent hover:text-sky-600 hover:border-sky-500" onclick="showSection('challenges', this)">経営課題</button></li>
-            </ul>
-        </nav>
+    <main class="container mx-auto p-4 md:p-8">
 
-        <main>
-            <section id="summary" class="content-section active bg-white p-6 rounded-lg shadow">
-                <h2 class="text-2xl font-semibold text-sky-700 mb-4">1. 概要</h2>
-                <div class="space-y-4 text-stone-700">
-                    <div>
-                        <h3 class="text-lg font-semibold mb-1">本報告の目的</h3>
-                        <p>当社の売上および従業員賃金の現状を客観的データに基づき分析し、経営上の重要課題を明確にすること。</p>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold mb-1">分析から明らかになった主要な課題</h3>
-                        <ul class="list-disc list-inside space-y-1">
-                            <li>当社の売上は、近年の物価上昇を考慮すると実質的に過去のピーク時から見て停滞している状況です。</li>
-                            <li>主要従業員の賃金は、名目上は増加しているものの、物価上昇分を差し引いた実質価値では、一般的な成長モデルと比較してマイナス成長となっている可能性が示唆されます。</li>
+        <section id="overall-trend" class="my-12">
+            <div class="bg-white p-6 rounded-lg shadow-xl">
+                <h2 class="text-3xl font-semibold text-blue-700 mb-4 text-center">大局を見る：横浜市の食料品インフレ全貌</h2>
+                <p class="text-lg mb-6 text-gray-700 leading-relaxed text-center">
+                    消費者物価指数（CPI）は、私たちの生活に直接関わる財やサービスの価格変動を示す重要な指標です。ここでは、横浜市における「食料」全体のCPIが過去13年間でどのように推移してきたかを見ていきます。2020年の価格を100として、その変動を追跡します。
+                </p>
+                <div class="chart-container">
+                    <canvas id="overallFoodCpiChart"></canvas>
+                </div>
+                <p class="mt-6 text-md text-gray-600 text-center">
+                    グラフは、特に2014年と2019年の消費税増税時期や、2022年以降の国際情勢緊迫化と円安進行に伴い、価格上昇が顕著になっている可能性を示唆しています。全体として右肩上がりのトレンドが見て取れます。
+                </p>
+            </div>
+        </section>
+
+        <section id="category-deep-dive" class="my-12">
+            <div class="bg-white p-6 rounded-lg shadow-xl">
+                <h2 class="text-3xl font-semibold text-blue-700 mb-4 text-center">家計を圧迫する品目は？カテゴリー別 価格上昇率</h2>
+                <p class="text-lg mb-6 text-gray-700 leading-relaxed text-center">
+                    「食料」と一口に言っても、品目によって価格の動きは異なります。ここでは、主要な食品カテゴリー別にCPIの推移を比較し、どの品目の価格が特に上昇したのか、また変動が大きかったのかを掘り下げます。
+                </p>
+                
+                <h3 class="text-2xl font-medium text-blue-600 my-6 text-center">主要食品カテゴリー別 CPI推移 (2012-2024年)</h3>
+                <div class="chart-container mb-10">
+                    <canvas id="categoryCpiLineChart"></canvas>
+                </div>
+                <p class="mt-4 mb-8 text-md text-gray-600 text-center">
+                    生鮮食品（特に生鮮野菜）は天候に左右されやすく価格変動が大きい一方、穀物や外食はじわじわと、しかし着実に価格が上昇している様子がうかがえます。油脂・調味料も国際価格の影響を受けやすい品目です。
+                </p>
+
+                <h3 class="text-2xl font-medium text-blue-600 my-6 text-center">食品カテゴリー別 上昇率ランキング (2012年比 2024年)</h3>
+                <div class="chart-container">
+                    <canvas id="categoryIncreaseBarChart"></canvas>
+                </div>
+                <p class="mt-6 text-md text-gray-600 text-center">
+                    この棒グラフは、2012年から2024年までの間に各食品カテゴリーの価格が何パーセント上昇したかを示しています。特に上昇率の高いカテゴリーを把握することで、家計への影響が大きい品目が明らかになります。
+                </p>
+            </div>
+        </section>
+
+        <section id="driving-factors" class="my-12">
+            <div class="bg-white p-6 rounded-lg shadow-xl">
+                <h2 class="text-3xl font-semibold text-blue-700 mb-4 text-center">価格の裏側：食料品インフレを煽る要因</h2>
+                <p class="text-lg mb-6 text-gray-700 leading-relaxed text-center">
+                    食料品価格の上昇は、単一の原因ではなく、国内外の様々な要因が複雑に絡み合って発生しています。ここでは、主な価格押し上げ要因を見ていきましょう。
+                </p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="factor-card">
+                        <div class="flex items-center mb-3">
+                            <span class="factor-icon">🌍</span>
+                            <h3 class="text-xl font-semibold text-blue-600">国際的・国内共通要因</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li><strong>原材料価格の高騰:</strong> 小麦、大豆、食用油などの国際相場上昇。</li>
+                            <li><strong>エネルギー価格の上昇:</strong> 原油高による生産・輸送コスト増。</li>
+                            <li><strong>為替レートの変動:</strong> 円安による輸入コスト増。</li>
+                            <li><strong>天候不順・気候変動:</strong> 不作による供給減と価格高騰。</li>
+                            <li><strong>人手不足と人件費の上昇:</strong> 生産・流通コスト増。</li>
+                            <li><strong>農業生産資材費の上昇:</strong> 肥料・飼料価格の高騰。</li>
                         </ul>
                     </div>
-                    <p class="mt-6 text-sm text-stone-600">このアプリケーションは、これらの課題を詳細データと共に視覚的に提示します。各タブをクリックして詳細をご確認ください。</p>
+                    <div class="factor-card">
+                        <div class="flex items-center mb-3">
+                            <span class="factor-icon">🏘️</span>
+                            <h3 class="text-xl font-semibold text-blue-600">地域・構造的要因</h3>
+                        </div>
+                        <ul class="list-disc list-inside text-gray-700 space-y-2">
+                            <li><strong>価格転嫁のタイムラグ:</strong> コスト上昇が遅れて小売価格に反映。</li>
+                            <li><strong>下方硬直性:</strong> 一度上がった価格が下がりにくい傾向。</li>
+                            <li><strong>「生鮮食品」と「その他」の要因差:</strong> 生鮮は天候、他はコスト要因が強い。</li>
+                            <li><strong>物流コストの構造的上昇:</strong> ドライバー不足等。</li>
+                            <li><strong>国内の食料自給率の低さ:</strong> 輸入依存体質。</li>
+                        </ul>
+                    </div>
                 </div>
-            </section>
+                <p class="mt-8 text-md text-gray-600 text-center">
+                    これらの要因が複合的に作用し、横浜市を含む日本全国で食料品価格が上昇しています。特に輸入に頼る品目は、国際情勢や為替の変動に大きく影響されます。
+                </p>
+            </div>
+        </section>
 
-            <section id="sales" class="content-section bg-white p-6 rounded-lg shadow">
-                <h2 class="text-2xl font-semibold text-sky-700 mb-4">2. 売上高の現状評価</h2>
-                <p class="mb-6 text-stone-700">このセクションでは、過去の売上実績（2013年）を現在の物価価値に換算し、近年の売上状況（2024年見込）と比較分析します。物価上昇を考慮した実質的な売上成長が課題であることが示されています。</p>
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <div class="kpi-card">
-                        <h3 class="kpi-title">2013年売上 (現在価値換算)</h3>
-                        <p class="kpi-value">3,799<span class="text-sm">万円</span></p>
-                        <p class="kpi-comparison">2013年実績3,190万円 (物価上昇約19.09%考慮)</p>
+        <section id="impact-outlook" class="my-12">
+            <div class="bg-white p-6 rounded-lg shadow-xl">
+                <h2 class="text-3xl font-semibold text-blue-700 mb-4 text-center">波及効果：横浜市民への影響と今後の見通し</h2>
+                <p class="text-lg mb-6 text-gray-700 leading-relaxed">
+                    食料品価格の上昇は、私たちの生活に様々な影響を及ぼします。家計への直接的な負担増はもちろんのこと、消費行動の変化や地域経済への影響も無視できません。
+                </p>
+                <div class="grid md:grid-cols-2 gap-6 items-center">
+                    <div>
+                        <h3 class="text-xl font-medium text-blue-600 mb-2">家計への影響</h3>
+                        <p class="text-gray-700 mb-4">
+                            食料品は生活必需品であるため、価格上昇は家計支出における固定的な負担増を意味します。特に低所得者層ほどエンゲル係数が高いため、影響はより深刻になる可能性があります。節約志向の高まりや、購入品目の変化などが考えられます。
+                        </p>
+                        <h3 class="text-xl font-medium text-blue-600 mb-2">地域経済への影響</h3>
+                        <p class="text-gray-700">
+                            小売業や外食産業では、仕入れコストの増加が経営を圧迫します。価格転嫁が難しい場合、収益が悪化する可能性も。また、消費者の買い控えは地域全体の経済活動を鈍化させる要因となり得ます。
+                        </p>
                     </div>
-                    <div class="kpi-card">
-                        <h3 class="kpi-title">2024年度見込売上</h3>
-                        <p class="kpi-value">3,665<span class="text-sm">万円</span></p>
-                        <p class="kpi-comparison">2023年度実績: 3,318万円</p>
+                    <div class="text-center">
+                        <div class="bg-blue-100 p-6 rounded-lg inline-block">
+                            <div class="text-6xl font-bold text-blue-500">25.6%</div>
+                            <p class="text-xl text-blue-700 mt-2">総合食料CPI上昇率<br>(2012年 → 2024年)</p>
+                        </div>
                     </div>
                 </div>
-                <div class="kpi-card mb-6 text-center">
-                    <h3 class="kpi-title">2024年見込 vs 2013年現在価値</h3>
-                    <p class="kpi-value text-negative">マイナス134<span class="text-sm">万円</span></p>
-                    <p class="kpi-comparison">実質的な売上価値が過去の水準に達していない状況</p>
-                </div>
-                <div class="chart-container mx-auto">
-                    <canvas id="salesChart"></canvas>
-                </div>
-                <div class="mt-6 text-stone-700 space-y-2">
-                    <h3 class="text-lg font-semibold">メッセージポイント:</h3>
-                    <ul class="list-disc list-inside">
-                        <li>過去の売上水準（例：2013年3,190万円）を現在の物価価値に換算（3,799万円）すると、当社の近年の売上（2024年見込3,665万円）は、実質的に過去の売上価値を維持できていない状況です。</li>
-                        <li>これは、物価上昇分を売上増加で吸収できておらず、実質的な事業規模の停滞または縮小を示唆します。</li>
-                        <li>名目上の売上増加（2023年実績3,318万円 → 2024年見込3,665万円）は見られますが、過去の事業規模と比較すると、実質的には課題が残ります。</li>
-                        <li>物価上昇分の売り上げに届いていない場合、<span class="highlight-text">仕入れの物価上昇が純利益を圧迫している可能性が高い</span>こともリスクです。</li>
-                    </ul>
-                </div>
-            </section>
+                <h3 class="text-xl font-medium text-blue-600 mt-8 mb-2">今後の展望と留意点</h3>
+                <p class="text-gray-700 leading-relaxed">
+                    今後も気候変動、国際情勢の不安定化、資源価格の変動、構造的な人手不足などは、食料品価格に影響を与え続けると考えられます。これらの動向を注視し、家計管理や社会全体での対策を考えていく必要があります。
+                    消費者物価指数は平均的な動きを示すものであり、個々の購入品目や店舗によって実感は異なる点に留意が必要です。
+                </p>
+            </div>
+        </section>
 
-            <section id="inflation" class="content-section bg-white p-6 rounded-lg shadow">
-                <h2 class="text-2xl font-semibold text-sky-700 mb-4">3. 物価上昇の外部環境（家計への影響）</h2>
-                <p class="mb-6 text-stone-700">ここでは、社会全体の物価上昇が家計に与える影響を分析します。特に、一定の生活水準を維持するためのコストが増加している現状を示し、これが従業員の購買力に影響を与えている可能性を指摘します。</p>
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <div class="kpi-card">
-                        <h3 class="kpi-title">2012年 月間生活費 (4人世帯・仮定)</h3>
-                        <p class="kpi-value">35<span class="text-sm">万円</span></p>
-                    </div>
-                    <div class="kpi-card">
-                        <h3 class="kpi-title">2023年 推定月間生活費 (同水準維持)</h3>
-                        <p class="kpi-value">約42.9<span class="text-sm">万円</span></p>
-                        <p class="kpi-comparison">要因: 食料品30%増、その他20%増 (仮定)</p>
-                    </div>
-                </div>
-                 <div class="kpi-card mb-6 text-center">
-                    <h3 class="kpi-title">月間生活費の増加額</h3>
-                    <p class="kpi-value text-negative">約7.9<span class="text-sm">万円</span></p>
-                    <p class="kpi-comparison">(42.9万円 - 35万円)</p>
-                </div>
-                <div class="mt-6 text-stone-700 space-y-2">
-                    <h3 class="text-lg font-semibold">メッセージポイント:</h3>
-                    <ul class="list-disc list-inside">
-                        <li>社会全体の物価は顕著に上昇しており、一定の生活水準を維持するためのコストは増加しています。</li>
-                        <li>この外部環境の変化は、従業員の生活に直接的な影響を与えており、購買力の維持が難しくなっている可能性があります。</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="wages" class="content-section bg-white p-6 rounded-lg shadow">
-                <h2 class="text-2xl font-semibold text-sky-700 mb-4">4. 主要従業員の賃金分析（A氏事例）</h2>
-                <p class="mb-6 text-stone-700">A氏の事例を通じて、従業員の賃金が物価上昇に対してどのように推移しているかを分析します。名目賃金は増加していても、実質的な価値では理想的な成長モデルに比べてマイナス成長となっている可能性を示唆します。</p>
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <div class="kpi-card">
-                        <h3 class="kpi-title">A氏の実質価値賃金 (2012年基準)</h3>
-                        <p class="kpi-value">約358<span class="text-sm">万円</span></p>
-                        <p class="kpi-comparison">2024年名目531万円 - 物価上昇分約91万円</p>
-                    </div>
-                    <div class="kpi-card">
-                        <h3 class="kpi-title">一般的な上昇モデルの実質価値賃金 (2012年基準)</h3>
-                        <p class="kpi-value">約501<span class="text-sm">万円</span></p>
-                        <p class="kpi-comparison">中小企業の平均的実質成長ケース</p>
-                    </div>
-                </div>
-                <div class="kpi-card mb-6 text-center">
-                    <h3 class="kpi-title">A氏の実質価値 vs 一般的な上昇</h3>
-                    <p class="kpi-value text-negative">マイナス62<span class="text-sm">万円</span></p>
-                    <p class="kpi-comparison">一般的な上昇モデルを下回る</p>
-                </div>
-                <div class="chart-container mx-auto">
-                    <canvas id="wagesChart"></canvas>
-                </div>
-                <div class="mt-6 text-stone-700 space-y-2">
-                    <h3 class="text-lg font-semibold">メッセージポイント:</h3>
-                    <ul class="list-disc list-inside">
-                        <li>A氏の賃金は名目上、2012年の358万円から2024年には531万円へと増加しています。</li>
-                        <li>しかし、物価上昇（基準賃金に対し約21%、金額にして約91万円と仮定）を考慮すると、実質的な価値は約439万円と評価できます。</li>
-                        <li>この実質価値（439万円）は、理想モデルにおける実質賃金（501万円）と比較して、62万円下回っており、実質賃金がマイナス成長であることを示しています。</li>
-                        <li>これは、A氏の賃金の名目的な増加分が、物価上昇による生活コスト増に追いついておらず、実質的な購買力向上には繋がっていない可能性を示唆します。</li>
-                    </ul>
-                </div>
-            </section>
-
-            <section id="challenges" class="content-section bg-white p-6 rounded-lg shadow">
-                <h2 class="text-2xl font-semibold text-sky-700 mb-4">5. 経営課題の明確化</h2>
-                <p class="mb-6 text-stone-700">これまでの分析結果を踏まえ、当社の経営上の主要な課題を明確にします。これらの課題は、短期的な資金繰りだけでなく、中長期的な事業継続と成長の観点からも重要です。</p>
-                <div class="space-y-4">
-                    <div class="kpi-card">
-                        <h3 class="text-lg font-semibold text-sky-600 mb-1">売上成長の実質的停滞</h3>
-                        <p class="text-stone-700">当社の売上成長は物価上昇ペースに追いついておらず、実質的な事業規模は過去と比較して停滞または縮小の可能性。市場競争力の相対的低下を示唆。</p>
-                    </div>
-                    <div class="kpi-card">
-                        <h3 class="text-lg font-semibold text-sky-600 mb-1">収益性悪化のリスク</h3>
-                        <p class="text-stone-700">物価上昇は仕入れコスト等も増加させます。売上が実質的に伸び悩む中でコストが増加し続ければ、収益性がさらに悪化するリスクあり。</p>
-                    </div>
-                    <div class="kpi-card">
-                        <h3 class="text-lg font-semibold text-sky-600 mb-1">従業員の生活基盤への影響</h3>
-                        <p class="text-stone-700">主要従業員の賃金が実質的に目減りしている状況は、生活不安に繋がりかねず、生産性低下リスクを高める要因。</p>
-                    </div>
-                </div>
-                <div class="mt-8 p-4 bg-sky-50 border border-sky-200 rounded-lg">
-                    <h3 class="text-xl font-semibold text-sky-700 mb-2">総括</h3>
-                    <p class="text-stone-700 mb-3">このレポートでは、売上・物価・賃金の３つの視点から、会社の今の状況をできるだけ客観的に整理しました。見えてきたのは、日々の仕事がしっかり続いている一方で、物価や生活コストの変化を踏まえると、会社も働く人たちも、これまで以上に影響を受けやすい状況になってきているかもしれない、という点です。
-
-このまま今のやり方を大きく変えずに営業を続けるのか、あるいはどこかで少し立ち止まって、新しい対策を考えていくのか。判断のタイミングとして、今は一つの分かれ道かもしれません。
-
-まずはこの状況をみんなで一緒に考えて、「今、会社がどんな状態にあるのか」を共有することが、これからの話し合いの土台になればと思います。</p>
-                    <p class="text-stone-700"></p>
-                </div>
-            </section>
-        </main>
-
-        <footer class="mt-12 text-center text-sm text-stone-500">
-            <p>&copy; <span id="currentYear"></span> 経営分析レポート. All rights reserved.</p>
+        <footer class="text-center py-8 text-gray-600 border-t border-blue-200">
+            <p class="mb-2"><strong>データについて:</strong></p>
+            <p class="text-sm">
+                本インフォグラフィックに掲載されている消費者物価指数（CPI）のデータは、総務省統計局「e-Stat」で公表されている横浜市の時系列データを基に、2020年基準の接続指数として算出した想定値および公表値を模したものです。
+                実際の詳細な数値や計算方法については、総務省統計局の公表資料をご参照ください。
+                本インフォグラフィックは、教育および情報提供を目的として作成されたものであり、具体的な数値は説明のための例示です。
+            </p>
+            <p class="mt-4 text-xs">&copy; 2024 横浜市食料品価格インフォグラフィック. All rights reserved (for illustrative purposes).</p>
         </footer>
-    </div>
+
+    </main>
 
     <script>
-        function showSection(sectionId, element) {
-            const sections = document.querySelectorAll('.content-section');
-            sections.forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(sectionId).classList.add('active');
-
-            const buttons = document.querySelectorAll('.tab-button');
-            buttons.forEach(button => {
-                button.classList.remove('active', 'text-sky-600', 'border-sky-500');
-                button.classList.add('text-stone-700', 'border-transparent');
-            });
-            element.classList.add('active', 'text-sky-600', 'border-sky-500');
-            element.classList.remove('text-stone-700', 'border-transparent');
-        }
-
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
-
-        const salesData = {
-            labels: ['2013年売上(現在価値)', '2024年度見込売上'],
+        const overallFoodCpiData = {
+            labels: ['2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'],
             datasets: [{
-                label: '売上高 (万円)',
-                data: [3799, 3665], // Updated data
-                backgroundColor: ['#3b82f6', '#60a5fa'],
-                borderColor: ['#2563eb', '#3b82f6'],
-                borderWidth: 1
+                label: '横浜市 食料 総合指数 (2020年=100)',
+                data: [90, 91, 93, 94, 93.5, 94.5, 95.5, 97, 100, 101.5, 105, 110, 113],
+                borderColor: '#3B82F6', // blue-500
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true,
+                tension: 0.1
             }]
         };
 
-        const salesChartCtx = document.getElementById('salesChart').getContext('2d');
-        new Chart(salesChartCtx, {
-            type: 'bar',
-            data: salesData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: '金額 (万円)' }
-                    }
+        const categoryCpiData = {
+            labels: ['2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024'],
+            datasets: [
+                {
+                    label: '生鮮食品',
+                    data: [85, 90, 92, 88, 95, 93, 98, 96, 100, 103, 108, 115, 118],
+                    borderColor: '#EF4444', // red-500
+                    tension: 0.1,
+                    fill: false
                 },
-                plugins: {
-                    legend: { display: false },
-                    title: { display: true, text: '売上高比較 (2013年現在価値 vs 2024年見込)' }, // Updated title
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.parsed.y + '万円';
-                            }
-                        }
-                    }
+                {
+                    label: '穀類',
+                    data: [92, 93, 94, 95, 95.5, 96, 97, 98, 100, 102, 106, 111, 114],
+                    borderColor: '#F59E0B', // amber-500
+                    tension: 0.1,
+                    fill: false
+                },
+                {
+                    label: '肉類',
+                    data: [88, 90, 92, 94, 95, 96.5, 98, 99, 100, 102.5, 107, 112, 116],
+                    borderColor: '#8B5CF6', // violet-500
+                    tension: 0.1,
+                    fill: false
+                },
+                {
+                    label: '生鮮野菜',
+                    data: [80, 95, 85, 90, 105, 90, 100, 92, 100, 98, 110, 120, 115],
+                    borderColor: '#10B981', // emerald-500
+                    tension: 0.1,
+                    fill: false
+                },
+                {
+                    label: '外食',
+                    data: [95, 95.5, 96.5, 97, 97.5, 98, 98.5, 99, 100, 100.5, 103, 107, 110],
+                    borderColor: '#64748B', // slate-500
+                    tension: 0.1,
+                    fill: false
+                },
+                {
+                    label: '油脂・調味料',
+                    data: [89, 91, 93, 94, 93, 95, 96, 97, 100, 104, 110, 118, 122],
+                    borderColor: '#EC4899', // pink-500
+                    tension: 0.1,
+                    fill: false
                 }
-            }
-        });
-
-        const wagesData = {
-            labels: ['A氏の実質価値賃金', '一般的な上昇モデルの実質価値賃金'],
-            datasets: [{
-                label: '実質価値賃金 (2012年基準, 万円)',
-                data: [439, 501],
-                backgroundColor: ['#f97316', '#fb923c'],
-                borderColor: ['#ea580c', '#f97316'],
-                borderWidth: 1
-            }]
+            ]
         };
-
-        const wagesChartCtx = document.getElementById('wagesChart').getContext('2d');
-        new Chart(wagesChartCtx, {
-            type: 'bar',
-            data: wagesData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: { display: true, text: '金額 (万円)' }
-                    }
-                },
-                plugins: {
-                    legend: { display: false },
-                    title: { display: true, text: 'A氏 vs 一般的な上昇モデル (実質価値賃金比較)' },
-                     tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.parsed.y + '万円';
-                            }
-                        }
-                    }
-                }
-            }
-        });
         
-        // Initialize first tab as active
-        document.addEventListener('DOMContentLoaded', () => {
-            const firstTabButton = document.querySelector('.tab-button[data-tab="summary"]');
-            if (firstTabButton) {
-                firstTabButton.classList.add('active', 'text-sky-600', 'border-sky-500');
-                firstTabButton.classList.remove('text-stone-700', 'border-transparent');
-            }
-        });
+        const categoryIncreaseDataRaw = [
+            { label: '生鮮食品', start: 85, end: 118 },
+            { label: '穀類', start: 92, end: 114 },
+            { label: '肉類', start: 88, end: 116 },
+            { label: '生鮮野菜', start: 80, end: 115 },
+            { label: '外食', start: 95, end: 110 },
+            { label: '油脂・調味料', start: 89, end: 122 },
+            { label: '菓子類', start: 93, end: 112} // Added from thought process
+        ];
 
+        function wrapLabel(label, maxLength = 16) {
+            if (typeof label !== 'string' || label.length <= maxLength) {
+                return label;
+            }
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > maxLength && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                } else {
+                    currentLine += word + ' ';
+                }
+            }
+            if (currentLine.trim().length > 0) {
+                lines.push(currentLine.trim());
+            }
+            return lines.length > 0 ? lines : [label];
+        }
+        
+        const categoryIncreaseChartData = {
+            labels: categoryIncreaseDataRaw.map(item => wrapLabel(item.label, 10)), // Wrap labels for Y-axis
+            datasets: [{
+                label: '価格上昇率 (2012年比 2024年)',
+                data: categoryIncreaseDataRaw.map(item => ((item.end - item.start) / item.start * 100).toFixed(1)),
+                backgroundColor: [
+                    'rgba(239, 68, 68, 0.7)',  // red-500
+                    'rgba(245, 158, 11, 0.7)', // amber-500
+                    'rgba(139, 92, 246, 0.7)', // violet-500
+                    'rgba(16, 185, 129, 0.7)', // emerald-500
+                    'rgba(100, 116, 139, 0.7)',// slate-500
+                    'rgba(236, 72, 153, 0.7)', // pink-500
+                    'rgba(59, 130, 246, 0.7)' // blue-500 for sweets
+                ],
+                borderColor: [
+                    '#EF4444',
+                    '#F59E0B',
+                    '#8B5CF6',
+                    '#10B981',
+                    '#64748B',
+                    '#EC4899',
+                    '#3B82F6'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const chartOptionsBase = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                              return label.join(' ');
+                            }
+                            return label;
+                        }
+                    }
+                },
+                legend: {
+                    labels: {
+                        color: '#1E3A8A' // text-blue-800
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    ticks: { color: '#4B5563' }, // text-gray-600
+                    grid: { color: '#E5E7EB' }  // gray-200
+                },
+                x: {
+                    ticks: { color: '#4B5563' },
+                    grid: { color: '#E5E7EB' }
+                }
+            }
+        };
+        
+        const barChartOptions = JSON.parse(JSON.stringify(chartOptionsBase)); // Deep copy
+        barChartOptions.indexAxis = 'y'; // For horizontal bar chart
+        barChartOptions.scales.y.ticks.callback = function(value, index, values) {
+            // This callback is for the tick labels on the y-axis
+            // The labels are already processed (wrapped) when passed to chartData.labels
+            // So, if chartData.labels[index] is an array, Chart.js should handle it.
+            // If not, we might need to join it here for display if Chart.js doesn't auto-join arrays for axis ticks.
+            // However, Chart.js typically expects strings for tick labels.
+            // The wrapLabel function returns an array if wrapping occurs.
+            // Let's ensure it's a string for the axis.
+            const label = this.getLabelForValue(value); // Gets the original label for the tick
+            return Array.isArray(label) ? label.join('\n') : label; // Join with newline for axis display
+        };
+         barChartOptions.scales.x.beginAtZero = true;
+
+
+        window.onload = function() {
+            const overallCtx = document.getElementById('overallFoodCpiChart').getContext('2d');
+            new Chart(overallCtx, {
+                type: 'line',
+                data: overallFoodCpiData,
+                options: chartOptionsBase
+            });
+
+            const categoryLineCtx = document.getElementById('categoryCpiLineChart').getContext('2d');
+            new Chart(categoryLineCtx, {
+                type: 'line',
+                data: categoryCpiData,
+                options: chartOptionsBase
+            });
+            
+            const categoryBarCtx = document.getElementById('categoryIncreaseBarChart').getContext('2d');
+            new Chart(categoryBarCtx, {
+                type: 'bar',
+                data: categoryIncreaseChartData,
+                options: barChartOptions
+            });
+        };
     </script>
 </body>
 </html>
