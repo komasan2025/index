@@ -7,13 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Application Structure Plan: 
-        - Navigation: Top tabs for "サマリー", "売上分析", "物価影響", "賃金分析", "経営課題".
+        - Navigation: Top tabs for "概要", "売上分析", "物価影響", "賃金分析", "経営課題".
         - User Flow: Click tabs to switch content sections. Each section displays relevant data, charts, and key messages.
         - Rationale: Thematic sectioning improves usability over a long scroll, allowing direct access to specific information areas and breaking down complex data into digestible parts. This structure is chosen to facilitate quick understanding and focused analysis by the target audience (family members involved in経営判断).
     -->
     <!-- Visualization & Content Choices:
-        - サマリー: Styled text blocks (HTML/Tailwind) for a quick overview. Goal: Inform. Interaction: None. Justification: Direct presentation of main findings.
-        - 売上分析: Bar chart (Chart.js) comparing '2012年実績(現在価値)' vs '2024年見込'. Text for difference. Goal: Compare. Interaction: Tooltips. Justification: Visual sales gap highlight.
+        - 概要: Styled text blocks (HTML/Tailwind) for a quick overview. Goal: Inform. Interaction: None. Justification: Direct presentation of main findings.
+        - 売上分析: Bar chart (Chart.js) comparing '2013年実績(現在価値)' vs '2024年見込'. Text for difference. Goal: Compare. Interaction: Tooltips. Justification: Visual sales gap highlight.
         - 物価影響: Key figures and a simple bar visual (HTML/Tailwind) for living cost increase. Goal: Inform. Interaction: None. Justification: Direct impact numbers.
         - 賃金分析: Bar chart (Chart.js) comparing 'A氏の実質価値賃金' vs '理想モデルの実質価値賃金'. Text for difference. Goal: Compare. Interaction: Tooltips. Justification: Visual real wage shortfall.
         - 経営課題: Styled list/cards (HTML/Tailwind) for challenges and conclusion. Goal: Inform. Interaction: None. Justification: Clear, itemized issues.
@@ -62,6 +62,10 @@
         .text-negative { color: #ef4444; /* text-red-500 */ }
         .text-positive { color: #22c55e; /* text-green-500 */ }
         .nav-item:hover { background-color: #f3f4f6; /* hover:bg-gray-100 */ }
+        .highlight-text {
+            font-weight: 600; /* semibold */
+            color: #dc2626; /* red-600 */
+        }
     </style>
 </head>
 <body class="bg-stone-100 text-stone-800">
@@ -74,7 +78,7 @@
 
         <nav class="bg-white shadow-md rounded-lg mb-8 sticky top-0 z-10">
             <ul class="flex flex-wrap justify-center md:justify-start">
-                <li><button data-tab="summary" class="tab-button nav-item text-sm md:text-base font-medium p-3 md:p-4 text-stone-700 border-b-4 border-transparent hover:text-sky-600 hover:border-sky-500 active" onclick="showSection('summary', this)">サマリー</button></li>
+                <li><button data-tab="summary" class="tab-button nav-item text-sm md:text-base font-medium p-3 md:p-4 text-stone-700 border-b-4 border-transparent hover:text-sky-600 hover:border-sky-500 active" onclick="showSection('summary', this)">概要</button></li>
                 <li><button data-tab="sales" class="tab-button nav-item text-sm md:text-base font-medium p-3 md:p-4 text-stone-700 border-b-4 border-transparent hover:text-sky-600 hover:border-sky-500" onclick="showSection('sales', this)">売上分析</button></li>
                 <li><button data-tab="inflation" class="tab-button nav-item text-sm md:text-base font-medium p-3 md:p-4 text-stone-700 border-b-4 border-transparent hover:text-sky-600 hover:border-sky-500" onclick="showSection('inflation', this)">物価影響</button></li>
                 <li><button data-tab="wages" class="tab-button nav-item text-sm md:text-base font-medium p-3 md:p-4 text-stone-700 border-b-4 border-transparent hover:text-sky-600 hover:border-sky-500" onclick="showSection('wages', this)">賃金分析</button></li>
@@ -84,7 +88,7 @@
 
         <main>
             <section id="summary" class="content-section active bg-white p-6 rounded-lg shadow">
-                <h2 class="text-2xl font-semibold text-sky-700 mb-4">1. EXECUTIVE SUMMARY（要約）</h2>
+                <h2 class="text-2xl font-semibold text-sky-700 mb-4">1. 概要</h2>
                 <div class="space-y-4 text-stone-700">
                     <div>
                         <h3 class="text-lg font-semibold mb-1">本報告の目的</h3>
@@ -94,7 +98,7 @@
                         <h3 class="text-lg font-semibold mb-1">分析から明らかになった主要な課題</h3>
                         <ul class="list-disc list-inside space-y-1">
                             <li>当社の売上は、近年の物価上昇を考慮すると実質的に過去のピーク時から見て停滞している状況です。</li>
-                            <li>主要従業員の賃金は、名目上は増加しているものの、物価上昇分を差し引いた実質価値では、理想的な成長モデルと比較してマイナス成長となっている可能性が示唆されます。</li>
+                            <li>主要従業員の賃金は、名目上は増加しているものの、物価上昇分を差し引いた実質価値では、一般的な成長モデルと比較してマイナス成長となっている可能性が示唆されます。</li>
                         </ul>
                     </div>
                     <p class="mt-6 text-sm text-stone-600">このアプリケーションは、これらの課題を詳細データと共に視覚的に提示します。各タブをクリックして詳細をご確認ください。</p>
@@ -103,12 +107,12 @@
 
             <section id="sales" class="content-section bg-white p-6 rounded-lg shadow">
                 <h2 class="text-2xl font-semibold text-sky-700 mb-4">2. 売上高の現状評価</h2>
-                <p class="mb-6 text-stone-700">このセクションでは、過去の売上実績を現在の物価価値に換算し、近年の売上状況と比較分析します。物価上昇を考慮した実質的な売上成長が課題であることが示されています。</p>
+                <p class="mb-6 text-stone-700">このセクションでは、過去の売上実績（2013年）を現在の物価価値に換算し、近年の売上状況（2024年見込）と比較分析します。物価上昇を考慮した実質的な売上成長が課題であることが示されています。</p>
                 <div class="grid md:grid-cols-2 gap-6 mb-6">
                     <div class="kpi-card">
-                        <h3 class="kpi-title">2012年売上 (現在価値換算)</h3>
-                        <p class="kpi-value">約4,287<span class="text-sm">万円</span></p>
-                        <p class="kpi-comparison">2012年実績3,600万円 (物価上昇19.08%考慮)</p>
+                        <h3 class="kpi-title">2013年売上 (現在価値換算)</h3>
+                        <p class="kpi-value">3,799<span class="text-sm">万円</span></p>
+                        <p class="kpi-comparison">2013年実績3,190万円 (物価上昇約19.09%考慮)</p>
                     </div>
                     <div class="kpi-card">
                         <h3 class="kpi-title">2024年度見込売上</h3>
@@ -117,8 +121,8 @@
                     </div>
                 </div>
                 <div class="kpi-card mb-6 text-center">
-                    <h3 class="kpi-title">2024年見込 vs 2012年現在価値</h3>
-                    <p class="kpi-value text-negative">マイナス622<span class="text-sm">万円</span></p>
+                    <h3 class="kpi-title">2024年見込 vs 2013年現在価値</h3>
+                    <p class="kpi-value text-negative">マイナス134<span class="text-sm">万円</span></p>
                     <p class="kpi-comparison">実質的な売上価値が過去の水準に達していない状況</p>
                 </div>
                 <div class="chart-container mx-auto">
@@ -127,9 +131,10 @@
                 <div class="mt-6 text-stone-700 space-y-2">
                     <h3 class="text-lg font-semibold">メッセージポイント:</h3>
                     <ul class="list-disc list-inside">
-                        <li>過去の売上水準（例：2012年3,600万円）を現在の物価価値に換算（約4,287万円）すると、当社の近年の売上（2024年見込3,665万円）は、実質的に過去の売上価値を維持できていない状況です。</li>
+                        <li>過去の売上水準（例：2013年3,190万円）を現在の物価価値に換算（3,799万円）すると、当社の近年の売上（2024年見込3,665万円）は、実質的に過去の売上価値を維持できていない状況です。</li>
                         <li>これは、物価上昇分を売上増加で吸収できておらず、実質的な事業規模の停滞または縮小を示唆します。</li>
                         <li>名目上の売上増加（2023年実績3,318万円 → 2024年見込3,665万円）は見られますが、過去の事業規模と比較すると、実質的には課題が残ります。</li>
+                        <li>物価上昇分の売り上げに届いていない場合、<span class="highlight-text">仕入れの物価上昇が純利益を圧迫している可能性が高い</span>こともリスクです。</li>
                     </ul>
                 </div>
             </section>
@@ -168,19 +173,19 @@
                 <div class="grid md:grid-cols-2 gap-6 mb-6">
                     <div class="kpi-card">
                         <h3 class="kpi-title">A氏の実質価値賃金 (2012年基準)</h3>
-                        <p class="kpi-value">約439<span class="text-sm">万円</span></p>
+                        <p class="kpi-value">約358<span class="text-sm">万円</span></p>
                         <p class="kpi-comparison">2024年名目531万円 - 物価上昇分約91万円</p>
                     </div>
                     <div class="kpi-card">
-                        <h3 class="kpi-title">理想モデルの実質価値賃金 (2012年基準)</h3>
+                        <h3 class="kpi-title">一般的な上昇モデルの実質価値賃金 (2012年基準)</h3>
                         <p class="kpi-value">約501<span class="text-sm">万円</span></p>
                         <p class="kpi-comparison">中小企業の平均的実質成長ケース</p>
                     </div>
                 </div>
                 <div class="kpi-card mb-6 text-center">
-                    <h3 class="kpi-title">A氏の実質価値 vs 理想モデル</h3>
+                    <h3 class="kpi-title">A氏の実質価値 vs 一般的な上昇</h3>
                     <p class="kpi-value text-negative">マイナス62<span class="text-sm">万円</span></p>
-                    <p class="kpi-comparison">実質賃金が理想モデルを下回る</p>
+                    <p class="kpi-comparison">一般的な上昇モデルを下回る</p>
                 </div>
                 <div class="chart-container mx-auto">
                     <canvas id="wagesChart"></canvas>
@@ -188,7 +193,7 @@
                 <div class="mt-6 text-stone-700 space-y-2">
                     <h3 class="text-lg font-semibold">メッセージポイント:</h3>
                     <ul class="list-disc list-inside">
-                        <li>A氏の賃金は名目上、2012年の434万円から2024年には531万円へと増加しています。</li>
+                        <li>A氏の賃金は名目上、2012年の358万円から2024年には531万円へと増加しています。</li>
                         <li>しかし、物価上昇（基準賃金に対し約21%、金額にして約91万円と仮定）を考慮すると、実質的な価値は約439万円と評価できます。</li>
                         <li>この実質価値（439万円）は、理想モデルにおける実質賃金（501万円）と比較して、62万円下回っており、実質賃金がマイナス成長であることを示しています。</li>
                         <li>これは、A氏の賃金の名目的な増加分が、物価上昇による生活コスト増に追いついておらず、実質的な購買力向上には繋がっていない可能性を示唆します。</li>
@@ -209,14 +214,18 @@
                         <p class="text-stone-700">物価上昇は仕入れコスト等も増加させます。売上が実質的に伸び悩む中でコストが増加し続ければ、収益性がさらに悪化するリスクあり。</p>
                     </div>
                     <div class="kpi-card">
-                        <h3 class="text-lg font-semibold text-sky-600 mb-1">従業員の生活基盤とエンゲージメントへの影響</h3>
-                        <p class="text-stone-700">主要従業員の賃金が実質的に目減りしている状況は、生活不安や労働意欲低下に繋がりかねず、生産性低下や人材流出リスクを高める要因。</p>
+                        <h3 class="text-lg font-semibold text-sky-600 mb-1">従業員の生活基盤への影響</h3>
+                        <p class="text-stone-700">主要従業員の賃金が実質的に目減りしている状況は、生活不安に繋がりかねず、生産性低下リスクを高める要因。</p>
                     </div>
                 </div>
                 <div class="mt-8 p-4 bg-sky-50 border border-sky-200 rounded-lg">
-                    <h3 class="text-xl font-semibold text-sky-700 mb-2">総括メッセージ</h3>
-                    <p class="text-stone-700 mb-3">これらの分析結果は、短期的な資金繰りの問題だけでなく、中長期的な事業継続と成長の観点から、早急に対策を検討すべき経営上の重要課題であることを示しています。</p>
-                    <p class="text-stone-700">具体的な対策としては、売上増加策（新商品開発、販路拡大、価格戦略の見直し等）とコスト管理の徹底に加え、従業員のモチベーション維持・向上のための人事戦略（賃金体系の見直し、生産性向上施策と連動した報酬制度等）を総合的に検討する必要があります。</p>
+                    <h3 class="text-xl font-semibold text-sky-700 mb-2">総括</h3>
+                    <p class="text-stone-700 mb-3">このレポートでは、売上・物価・賃金の３つの視点から、会社の今の状況をできるだけ客観的に整理しました。見えてきたのは、日々の仕事がしっかり続いている一方で、物価や生活コストの変化を踏まえると、会社も働く人たちも、これまで以上に影響を受けやすい状況になってきているかもしれない、という点です。
+
+このまま今のやり方を大きく変えずに営業を続けるのか、あるいはどこかで少し立ち止まって、新しい対策を考えていくのか。判断のタイミングとして、今は一つの分かれ道かもしれません。
+
+まずはこの状況をみんなで一緒に考えて、「今、会社がどんな状態にあるのか」を共有することが、これからの話し合いの土台になればと思います。</p>
+                    <p class="text-stone-700"></p>
                 </div>
             </section>
         </main>
@@ -246,10 +255,10 @@
         document.getElementById('currentYear').textContent = new Date().getFullYear();
 
         const salesData = {
-            labels: ['2012年売上(現在価値)', '2024年度見込売上'],
+            labels: ['2013年売上(現在価値)', '2024年度見込売上'],
             datasets: [{
                 label: '売上高 (万円)',
-                data: [4287, 3665],
+                data: [3799, 3665], // Updated data
                 backgroundColor: ['#3b82f6', '#60a5fa'],
                 borderColor: ['#2563eb', '#3b82f6'],
                 borderWidth: 1
@@ -271,7 +280,7 @@
                 },
                 plugins: {
                     legend: { display: false },
-                    title: { display: true, text: '売上高比較 (2012年現在価値 vs 2024年見込)' },
+                    title: { display: true, text: '売上高比較 (2013年現在価値 vs 2024年見込)' }, // Updated title
                     tooltip: {
                         callbacks: {
                             label: function(context) {
@@ -284,7 +293,7 @@
         });
 
         const wagesData = {
-            labels: ['A氏の実質価値賃金', '理想モデルの実質価値賃金'],
+            labels: ['A氏の実質価値賃金', '一般的な上昇モデルの実質価値賃金'],
             datasets: [{
                 label: '実質価値賃金 (2012年基準, 万円)',
                 data: [439, 501],
@@ -309,7 +318,7 @@
                 },
                 plugins: {
                     legend: { display: false },
-                    title: { display: true, text: 'A氏 vs 理想モデル (実質価値賃金比較)' },
+                    title: { display: true, text: 'A氏 vs 一般的な上昇モデル (実質価値賃金比較)' },
                      tooltip: {
                         callbacks: {
                             label: function(context) {
